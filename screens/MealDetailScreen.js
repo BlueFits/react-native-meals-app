@@ -1,7 +1,10 @@
 import React from "react";
 import { View, StyleSheet, Alert, ScrollView, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+//Actions Redux
+import { toggleFavorite } from "../store/actions/meals";
 
 //Cutom Components
 import MealDetailRendering from "../components/MealDetailRendering";
@@ -13,13 +16,13 @@ import { DefaultText } from "../controllers/TextController";
 import HeaderButton from "../components/HeaderButton";
 
 function MealDetail({ navigation, route }) {
-
+    //Hooks
     const MEALS = useSelector(state => state.mealsReducer.meals);
-
+    const dispatch = useDispatch();
+    //Extract from props
     const { mealId } = route.params;
-
+    //Logic
     const selectedId = MEALS.find((data) => data.id === mealId );
-
     //Custom Validation
     function longTitleHandler(title) {
         let titleProcess = title.split(" ");
@@ -33,7 +36,6 @@ function MealDetail({ navigation, route }) {
             return title;
         }
     };
-
     //Custom navigation Set Options
     navigation.setOptions({
         title: longTitleHandler(selectedId.title),
@@ -43,13 +45,15 @@ function MealDetail({ navigation, route }) {
                     <Item 
                         title="Favorite" 
                         iconName="ios-star" 
-                        onPress={() => {Alert.alert("Added to Favorites!", "Nice you figured it out", [{text:"Cancel", style:"cancel"}, {text:"Ok"}])}} 
+                        onPress={function() {
+                            dispatch(toggleFavorite(mealId));
+                        }} 
                     />
                 </HeaderButtons>
             );
         },  
     });
-
+    //Render
     return (  
         <ScrollView style={styles.screen}>
                 <View style={styles.headerBanner}>
