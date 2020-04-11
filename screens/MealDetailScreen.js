@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Alert, ScrollView, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,15 +16,17 @@ import { DefaultText } from "../controllers/TextController";
 import HeaderButton from "../components/HeaderButton";
 
 function MealDetail({ navigation, route }) {
-    //Hooks
-    const MEALS = useSelector(state => state.mealsReducer.meals);
-    const dispatch = useDispatch();
     //Extract from props
     const { mealId } = route.params;
-    //Logic
-    const selectedId = MEALS.find((data) => data.id === mealId );
-    //Custom Validation
+    //Hooks
+    const MEALS = useSelector(state => state.mealsReducer.meals);
+    const currentMealIsFavorite = useSelector(state => state.mealsReducer.favoriteMeals.some(meal => meal.id === mealId));
+    const dispatch = useDispatch();
+    //Logics
+    const selectedId = MEALS.find((data) => data.id === mealId );    
+    //Custom Validation Very Choppy Experience
     function longTitleHandler(title) {
+        console.log("longTitleHandler running...");
         let titleProcess = title.split(" ");
         let newTitle = [];
         if (titleProcess.length > 4) {
@@ -36,6 +38,20 @@ function MealDetail({ navigation, route }) {
             return title;
         }
     };
+    
+    /* My Solution
+    function favoriteIconHandler() {
+        const favMeals = useSelector(state => state.mealsReducer.favoriteMeals);
+        const indexCheck = favMeals.findIndex((meal) => meal.id === mealId);
+        console.log("favIconHandler running...");
+        if (indexCheck >= 0) {
+            return "ios-star";
+        } else {
+            return "ios-star-outline";
+        }
+    };
+    */
+
     //Custom navigation Set Options
     navigation.setOptions({
         title: longTitleHandler(selectedId.title),
@@ -44,9 +60,10 @@ function MealDetail({ navigation, route }) {
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
                     <Item 
                         title="Favorite" 
-                        iconName="ios-star" 
+                        iconName={currentMealIsFavorite ? "ios-star": "ios-star-outline"}
                         onPress={function() {
                             dispatch(toggleFavorite(mealId));
+                            console.log("dispatch successfully ran");
                         }} 
                     />
                 </HeaderButtons>

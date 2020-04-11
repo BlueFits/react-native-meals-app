@@ -1,8 +1,12 @@
 import React from "react";
+import { View } from "react-native";
 import { useSelector } from "react-redux";
 
 //Custom Component
 import MealList from "../components/MealList";
+
+//Controllers
+import { DefaultText } from "../controllers/TextController";
 
 //data
 import { CATEGORIES } from "../data/dummy-data";
@@ -21,9 +25,17 @@ function CategoryMeals({ navigation, route }) {
         title: selectedCategory.title,
     });
 
-    return (
-        <MealList toDisplay={toDisplay} navigation={navigation} />
-    );
+    if (!toDisplay.length) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <DefaultText>No matching filters here :(</DefaultText>
+            </View>
+        );
+    } else {
+        return (
+            <MealList toDisplay={toDisplay} navigation={navigation} />
+        );
+    }
 };
 
 export default CategoryMeals;5

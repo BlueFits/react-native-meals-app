@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { View, StyleSheet, Switch } from "react-native";
 
+//Actions Redux
+import { setFilters } from "../store/actions/meals";
+
 //Custom Components
 import SaveIconHeader from "../components/SaveIconHeader";
 //Constants
 import Colors from "../constants/Colors";
 //Controller
 import { DefaultText, HeaderText } from "../controllers/TextController";
+import { useDispatch } from "react-redux";
 
 //Local Components
 function FilterSwitch({ label, value, onValueChange  }) {
@@ -27,6 +31,9 @@ function FilterSwitch({ label, value, onValueChange  }) {
 
 export default function Filter({ navigation, route }) {
 
+    //Hooks
+    const dispatch = useDispatch();
+
     const [isGlutenFree, setIsGlutenFree] = useState(false);
     const [isLactoseFree, setIsLactoseFree] = useState(false);
     const [isVegan, setIsVegan] = useState(false);
@@ -41,7 +48,7 @@ export default function Filter({ navigation, route }) {
             vegan: isVegan,
             vegetarian: isVegetarian,
         };
-        console.log(appliedFilters);
+        dispatch(setFilters(appliedFilters));
         return;
     }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
 

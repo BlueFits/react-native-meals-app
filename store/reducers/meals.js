@@ -1,5 +1,5 @@
 import { MEALS } from "../../data/dummy-data"
-import { TOGGLE_FAVORITE } from "../actions/meals";
+import { TOGGLE_FAVORITE, SET_FILTERS } from "../actions/meals";
 
 const initialState = {
     meals: MEALS,
@@ -27,7 +27,27 @@ function mealsReducer(state = initialState, action) {
             } else {
                 return { ...state, favoriteMeals: favMealsUpdated.concat(mealToAdd) };
             }
-            return state;
+        case SET_FILTERS: 
+            const appliedFilters = action.filters;
+            //Filter will store if the true is returned and will not store it if a false is passed
+            const updatedFiltered = state.meals.filter(meal => {
+                //if the filter is false it will automatically not run
+                //We only want it to be removed if the filter is true, but the meal is not true
+                //Therefore this is the perfect solution
+                if (appliedFilters.glutenFree && !meal.isGlutenFree) {
+                    return false;
+                } else if (appliedFilters.lactoseFree && !meal.isLactoseFree) {
+                    return false;
+                } else if (appliedFilters.vegetarian && !meal.isVegetarian) {
+                    return false;
+                } else if (appliedFilters.vegan && !meal.isVegan) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            console.log("Number of meals: " + updatedFiltered.length);
+            return {...state, filteredMeals: updatedFiltered};
         default: 
             return state;
     };
